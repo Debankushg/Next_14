@@ -1,23 +1,29 @@
 "use client"
 import React from 'react'
+import dynamic from 'next/dynamic'
 import Images from 'next/image'
+import { FaArrowDown } from "react-icons/fa";
+
+
+const Rating = dynamic(() => import("@/components/Rating"), { ssr: false })
+
 
 const page = ({ params }) => {
 
     const foodItems = [
-        { id: 1, name: "Panner", price: 250 },
-        { id: 2, name: "Kulcha", price: 125.56 },
-        { id: 3, name: "Pizza", price: 108.34 },
-        { id: 4, name: "Biriyani", price: 350.43 },
-        { id: 5, name: "Chicken Rice", price: 150.66 },
-        { id: 6, name: "Fish", price: 225.58 }
+        { id: 1, name: "Panner", price: 250, rating: 3.5 },
+        { id: 2, name: "Kulcha", price: 125.56, rating: 4.5 },
+        { id: 3, name: "Pizza", price: 108.34, rating: 2.8 },
+        { id: 4, name: "Biriyani", price: 350.43, rating: 4.8 },
+        { id: 5, name: "Chicken Rice", price: 150.66, rating: 3.1 },
+        { id: 6, name: "Fish", price: 225.58, rating: 4 }
     ]
 
 
 
     const { product } = params;
-    const item = foodItems.find(item => item.id === parseInt(product, 10));
-    console.log(item, "params");
+    const item = foodItems.find(item => item.name === product);
+
 
     if (!item) {
         return <p>Item not found</p>;
@@ -39,9 +45,25 @@ const page = ({ params }) => {
                         </p>
                     </div>
                     <div className="px-6 pt-4 pb-2">
-                        <p className="text-gray-900 font-semibold">Price: ₹{item.price.toFixed(2)}</p>
+                        <div className="text-gray-900 font-semibold">
+                            <Rating value={item.rating} />
+                            <div>
+                                <div className="text-gray-900 font-semibold flex items-center">
+                                    <span>MRP:</span>
+                                    <span className="text-gray-400 line-through ml-1">₹{item.price.toFixed(2)}</span>
+                                    <FaArrowDown className="text-green-500 ml-2 mt-1" size={12} />
+                                    <span className="text-green-500">5% Off</span>
+                                </div>
+
+                            </div>
+                            <div>
+                                <span className="">Offered Price:</span>
+                                <span className="text-red-500 ml-2">₹{(item.price * 0.95).toFixed(2)}</span>
+                            </div>
+                        </div>
+
                         <button onClick={() => { /* function to handle the click event */ }}
-                            className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                            className="my-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                             Book your Order
                         </button>
                     </div>

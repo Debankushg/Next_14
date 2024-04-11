@@ -1,7 +1,8 @@
-import HomeMenu from "@/components/HomeMenu";
+
+import dynamic from 'next/dynamic'
 
 
-
+const HomeMenu = dynamic(() => import("@/components/HomeMenu"), { ssr: false })
 export default function Home() {
 
 

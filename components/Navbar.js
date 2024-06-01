@@ -27,7 +27,7 @@ const Navbar = () => {
               </Link>
             </li>
             <li>
-              <Link href="/contact" className={`font-semibold hover:bg-[#f7b602] hover:text-white rounded-full px-2 py-1 transition duration-300 ${isActive('/contact') ? 'bg-[#f7b602]' : ''}`}>
+              <Link href="/contacts" className={`font-semibold hover:bg-[#f7b602] hover:text-white rounded-full px-2 py-1 transition duration-300 ${isActive('/contacts') ? 'bg-[#f7b602]' : ''}`}>
                 Contact
 
               </Link>

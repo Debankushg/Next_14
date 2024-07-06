@@ -1,7 +1,8 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import postDataStore from '../../zustand/store';
 
 // Initial items
 const initialItems = [
@@ -9,11 +10,23 @@ const initialItems = [
     { id: '2', content: 'Item 2', inputValue: '', submit: false },
     { id: '3', content: 'Item 3', inputValue: '', submit: false },
     { id: '4', content: 'Item 4', inputValue: '', submit: false },
-  ];
+];
 
 const page = () => {
     const [items, setItems] = useState(initialItems);
     const [input, setInput] = useState('')
+    const { data, loading, error, fetchData } = postDataStore();
+    const deletePost = postDataStore((state) => state.deletePost);
+
+
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
+
+
+
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
 
     // Function to handle drag end event
     const handleOnDragEnd = (result) => {
@@ -43,19 +56,21 @@ const page = () => {
 
     const handleBtn = (id) => {
         const updatedItems = items.map((e) => {
-          if (e.id === id) {
-            return { ...e, submit: true };
-          } else {
-            return e;
-          }
+            if (e.id === id) {
+                return { ...e, submit: true };
+            } else {
+                return e;
+            }
         });
         console.log(updatedItems); // You can keep this log to verify the changes
         setItems(updatedItems);
-      };
+    };
 
 
     return (
-        <DragDropContext onDragEnd={handleOnDragEnd}>
+        <>
+
+            <DragDropContext onDragEnd={handleOnDragEnd}>
             <Droppable droppableId="droppable" direction="horizontal">
                 {(provided) => (
                     <div
@@ -107,6 +122,39 @@ const page = () => {
                 )}
             </Droppable>
         </DragDropContext>
+
+
+            <div className="container mx-auto p-4">
+                <h1 className="text-2xl font-bold mb-4">Posts of Employee</h1>
+                {data ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {data.map(({ id, title, body, userId }) => (<div className="max-w-sm rounded overflow-hidden shadow-lg bg-white m-4">
+                            <div className="px-6 py-4">
+                                <div className="font-bold text-xl mb-2 text-gray-800">Title: {title}</div>
+                                <p className="text-gray-700 text-base">{body}</p>
+                            </div>
+                            <div className="px-6 pt-4 pb-2">
+                                <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
+                                    User ID: {userId}
+                                </span>
+                                <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
+                                    Post ID: {id}
+                                </span>
+
+                                <button
+                                    onClick={() => deletePost(id)}
+                                    className="mt-2 bg-red-500 text-white px-3 py-1 rounded"
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        </div>))}
+                    </div>
+                ) : (
+                    <div className="text-center text-gray-500">No data available</div>
+                )}
+            </div>
+        </>
     );
 };
 
